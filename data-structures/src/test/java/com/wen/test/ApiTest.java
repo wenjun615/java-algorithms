@@ -1,7 +1,7 @@
-package com.wen.algorithms.test;
+package com.wen.test;
 
-import com.wen.algorithms.LinkedList;
-import com.wen.algorithms.List;
+import com.wen.linked.LinkedList;
+import com.wen.linked.List;
 
 /**
  * <p>

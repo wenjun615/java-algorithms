@@ -1,4 +1,4 @@
-package com.wen.algorithms;
+package com.wen.linked;
 
 /**
  * <p>
