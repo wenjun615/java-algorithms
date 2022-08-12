@@ -2,24 +2,24 @@ package com.wen.linked;
 
 /**
  * <p>
- * 实现单向链表
+ * 单向链表
  * </p>
  *
  * @author wenjun
  * @since 2022-07-25
  */
-public class LinkedList<E> implements List<E> {
+public class LinkedList<E> {
 
-    transient int size = 0;
+    private int size;
 
-    transient Node<E> first;
+    private Node<E> first;
 
-    transient Node<E> last;
+    private Node<E> last;
 
     public LinkedList() {
     }
 
-    void linkFirst(E e) {
+    public boolean addFirst(E e) {
         final Node<E> f = first;
         final Node<E> newNode = new Node<>(null, e, f);
         first = newNode;
@@ -29,9 +29,10 @@ public class LinkedList<E> implements List<E> {
             f.prev = newNode;
         }
         size++;
+        return true;
     }
 
-    void linkLast(E e) {
+    public boolean addLast(E e) {
         final Node<E> l = last;
         final Node<E> newNode = new Node<>(l, e, null);
         last = newNode;
@@ -41,112 +42,78 @@ public class LinkedList<E> implements List<E> {
             l.next = newNode;
         }
         size++;
-    }
-
-    @Override
-    public boolean add(E e) {
-        linkLast(e);
         return true;
     }
 
-    @Override
-    public boolean addFirst(E e) {
-        linkFirst(e);
-        return true;
-    }
-
-    @Override
-    public boolean addLast(E e) {
-        linkLast(e);
-        return true;
-    }
-
-    @Override
     public boolean remove(Object o) {
+        Node<E> temp = first;
         if (o == null) {
-            for (Node<E> x = first; x != null; x = x.next) {
-                if (x.item == null) {
-                    unlink(x);
-                    return true;
+            while (temp != null) {
+                if (temp.element == null) {
+                    return removeNode(temp);
                 }
+                temp = temp.next;
             }
         } else {
-            for (Node<E> x = first; x != null; x = x.next) {
-                if (o.equals(x.item)) {
-                    unlink(x);
-                    return true;
+            while (temp != null) {
+                if (o.equals(temp.element)) {
+                    return removeNode(temp);
                 }
+                temp = temp.next;
             }
         }
         return false;
     }
 
-    E unlink(Node<E> x) {
-        final E element = x.item;
-        final Node<E> next = x.next;
-        final Node<E> prev = x.prev;
+    private boolean removeNode(Node<E> node) {
+        final Node<E> next = node.next;
+        final Node<E> prev = node.prev;
         if (prev == null) {
             first = next;
         } else {
             prev.next = next;
-            x.prev = null;
+            node.prev = null;
         }
         if (next == null) {
             last = prev;
         } else {
             next.prev = prev;
-            x.next = null;
+            node.next = null;
         }
-        x.item = null;
+        node.element = null;
         size--;
-        return element;
+        return true;
     }
 
-    @Override
     public E get(int index) {
-        return node(index).item;
+        return node(index).element;
     }
 
-    @Override
-    public void printLinkList() {
-        if (this.size == 0) {
-            System.out.println("链表为空");
-        } else {
-            Node<E> temp = first;
-            System.out.print("目前的列表，头节点：" + first.item + " 尾节点：" + last.item + " 整体：");
-            while (temp != null) {
-                System.out.print(temp.item + "，");
+    private Node<E> node(int index) {
+        Node<E> temp;
+        // 判断 index 在前半段还是后半段（index 从 0 开始），>> 1 表示除 2
+        if (index < (size >> 1)) {
+            temp = first;
+            for (int i = 0; i < index; i++) {
                 temp = temp.next;
             }
-            System.out.println();
-        }
-    }
-
-    Node<E> node(int index) {
-        Node<E> x;
-        // 查找元素的位置在前半段还是后半段
-        if (index < (size >> 1)) {
-            x = first;
-            for (int i = 0; i < index; i++) {
-                x = x.next;
-            }
         } else {
-            x = last;
+            temp = last;
             for (int i = size - 1; i > index; i--) {
-                x = x.prev;
+                temp = temp.prev;
             }
         }
-        return x;
+        return temp;
     }
 
     private static class Node<E> {
 
-        E item;
+        E element;
         Node<E> next;
         Node<E> prev;
 
         public Node(Node<E> prev, E element, Node<E> next) {
-            this.item = element;
+            this.element = element;
             this.next = next;
             this.prev = prev;
         }
